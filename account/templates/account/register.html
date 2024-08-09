@@ -1,0 +1,173 @@
+
+{% load static %}
+    <!-- Custom styles for this template -->
+    <link href="{% static 'assets/css/form-validation.css' %}" rel="stylesheet">
+  </head>
+  <body>
+
+{% include 'main.html' %}
+<div class="container col-md-7 col-lg-8 pt-5">
+    <div class="text-center">
+        <img class="mb-4" src="{% static 'assets/brand/logo.jpg' %}" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">{{name}} Register</h1>        
+    </div>
+    <form id="registerForm" class="needs-validation" method="post" novalidate>
+        {% csrf_token %}
+        <div class="row g-3">
+        <div class="col-sm-6">
+            <label for="firstName" class="form-label">First name</label>
+            <input type="text" class="form-control" id="firstName" name="first_name" placeholder="" value="" required>
+            <div class="invalid-feedback">
+            Valid first name is required.
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <label for="lastName" class="form-label">Last name</label>
+            <input type="text" class="form-control" id="lastName" name="last_name" placeholder="" value="" required>
+            <div class="invalid-feedback">
+            Valid last name is required.
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label for="username" class="form-label">Username</label>
+            <div class="input-group has-validation">
+            <span class="input-group-text">@</span>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+            <div class="invalid-feedback">
+                Your username is required.
+            </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required>
+            <div class="invalid-feedback">
+            Please enter a valid email address.
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label for="file" class="form-label">Profile Picture</label>
+            <input type="file" class="form-control" id="photo" name="profile_picture" placeholder="" required>
+            <div class="invalid-feedback">
+            Profile Picture is required.
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" name="address_line1" placeholder="1234 Main St" required>
+            <div class="invalid-feedback">
+            Please enter your address.
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <label for="country" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" name="city" placeholder="" required>
+            <div class="invalid-feedback">
+            Please select a valid city.
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <label for="state" class="form-label">State</label>
+            <input type="text" class="form-control" id="state" name="state" placeholder="" required>
+            <div class="invalid-feedback">
+            Please provide a valid state.
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <label for="zip" class="form-label">Pin Code</label>
+            <input type="text" class="form-control" id="pin" name="pincode" placeholder="" required>
+            <div class="invalid-feedback">
+            pin code required.
+            </div>
+        </div>
+        <div class="col-12">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password1" minlength="8" placeholder="Password" required>
+            <div class="invalid-feedback">
+            must be atleast 8 Characters and contain both letters and numbers
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmPassword" name="password2" minlength="8" placeholder="Password" required>
+        <div class="invalid-feedback">
+            must be atleast 8 Characters and must match
+        </div>
+
+        </div>
+
+        <hr class="my-4">
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% endif %}    
+        <button class="w-100 btn btn-primary btn-lg" type="submit">Register</button>
+        <div class="row pt-2 text-center">
+            {% if name == 'Doctor' %}
+            <p>Have an account ? Login <a href="{% url 'DLogin' %}">here</a></p>
+            {% else %}
+            <p>Have an account ? Login <a href="{% url 'PLogin' %}">here</a></p>
+            {% endif%}
+            <div class="col-2">
+                <a class="w-100 btn btn-outline-primary" href="{% url 'Home' %}">Back</a>
+            </div>
+        </div>
+
+    </form>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('registerForm');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+
+    function validatePassword() {
+        const passwordValue = passwordInput.value;
+        const hasLetters = /[a-zA-Z]/.test(passwordValue);
+        const hasNumbers = /[0-9]/.test(passwordValue);
+
+        if (!hasLetters || !hasNumbers) {
+            passwordInput.setCustomValidity('Password must contain both letters and numbers.');
+        } else {
+            passwordInput.setCustomValidity('');
+        }
+
+        if (confirmPasswordInput.value !== passwordInput.value) {
+            confirmPasswordInput.setCustomValidity('Passwords do not match');
+        } else {
+            confirmPasswordInput.setCustomValidity('');
+        }
+    }
+
+    passwordInput.addEventListener('input', validatePassword);
+    confirmPasswordInput.addEventListener('input', validatePassword);
+
+    form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        form.classList.add('was-validated');
+    });
+});
+</script>
+<script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'assets/js/form-validation.js' %}"></script>
+<!-- <script type="text/javascript" src="{% static 'assets/js/program_reg_script.js' %}"></script> -->
+
+</body>
+</html>

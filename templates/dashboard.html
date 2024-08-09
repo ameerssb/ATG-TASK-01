@@ -1,0 +1,19 @@
+{% load static %}
+    <!-- Custom styles for this template -->
+  </head>
+  <body>
+    {% include 'header.html' %}    
+
+    {% include 'main.html' %}
+<div class="container pt-5">
+    <h1 class="text-center">Welcome to ATG Healthcare {{first_name}}</h1>
+    <img src="{% static 'assets/images/7632464.jpg'%}" class="container" alt="">
+</div>
+
+{% include 'footer.html' %}    
+<script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+<!-- <script type="text/javascript" src="{% static 'assets/js/program_reg_script.js' %}"></script> -->
+
+</body>
+</html>

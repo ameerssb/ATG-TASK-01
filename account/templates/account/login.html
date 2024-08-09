@@ -1,0 +1,50 @@
+
+{% load static %}
+    <!-- Custom styles for this template -->
+    <link href="{% static 'assets/css/signin.css' %}" rel="stylesheet">
+  </head>
+  <body>
+
+{% include 'main.html' %}
+
+<main class="form-signin text-center">
+    <form method="post">
+        <img class="mb-4" src="{% static 'assets/brand/logo.jpg' %}" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">{{name}} sign in</h1>
+        {% csrf_token %}
+        <div class="form-floating pb-3">
+        <input type="text" class="form-control" id="floatingInput" name="username" placeholder="username" required>
+        <label for="floatingInput">Username</label>
+        </div>
+        <div class="form-floating">
+        <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password" required>
+        <label for="floatingPassword">Password</label>
+        </div>    
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}    
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        <div class="row pt-2">
+            {% if name == 'Doctor' %}
+            <p>Dont Have an account Register <a href="{% url 'DRegister' %}">here</a></p>
+            {% else %}
+            <p>Dont Have an account Register <a href="{% url 'PRegister' %}">here</a></p>
+            {% endif%}
+            <div class="col-6">
+                <a class="w-100 btn btn-outline-primary" href="{% url 'Home' %}">Back</a>
+            </div>
+        </div>
+        <p class="mt-5 mb-3 text-muted">&copy; 2024</p>
+    </form>
+</main>
+      
+<script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+<!-- <script type="text/javascript" src="{% static 'assets/js/program_reg_script.js' %}"></script> -->
+
+</body>
+</html>
