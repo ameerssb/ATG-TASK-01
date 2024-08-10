@@ -23,7 +23,7 @@ class D_Login(View):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'Login successful')
-                return redirect('Home')  # Redirect to Home or dashboard
+                return redirect('dashboard')  # Redirect to Home or dashboard
             else:
                 messages.error(request, 'Invalid username or password')
                 return redirect('DLogin')
@@ -63,7 +63,7 @@ class P_Login(View):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'Login successful')
-                return redirect('Home')  # Redirect to Home or dashboard
+                return redirect('dashboard')  # Redirect to Home or dashboard
             else:
                 messages.error(request, 'Invalid username or password')
                 return redirect('DLogin')
