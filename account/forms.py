@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
+from .models import User,Blog
 
 
 class LoginForm(forms.Form):
@@ -9,6 +9,16 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 from django.contrib.auth.forms import UserCreationForm
+
+class BlogForm(forms.ModelForm):
+    class Meta:
+        model = Blog
+        fields = '__all__'
+        widgets = {
+            # 'user': forms.Select(attrs={'type': 'hidden'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+        }
 
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)
@@ -28,9 +38,10 @@ class RegisterForm(UserCreationForm):
             'last_name', 
             'email', 
             'profile_picture', 
-            'password1', 
-            'password2', 
             'address_line1', 
+            'password1',
+            'password2',
+            'status',
             'city', 
             'state', 
             'pincode'

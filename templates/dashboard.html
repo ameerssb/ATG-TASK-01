@@ -10,29 +10,15 @@
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
+          <div class="mt-2">
+            <p class="navbar-brand">Dashboard</p>
+          </div>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Our Services</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Departments</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Contact Us</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">About Us</a>
-              </li>
-            </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Hi, {{user.first_name}}
+                        Hi, {{user}}
                       </a>
                       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#">Change Password</a></li>   
@@ -68,14 +54,198 @@
     </nav>
   
     {% include 'main.html' %}
-<div class="container pt-5">
-    <h1 class="text-center">Welcome to ATG Healthcare {{user.first_name}}</h1>
-    <img src="{% static 'assets/images/7632464.jpg'%}" class="container" alt="">
-</div>
+  <div class="container pb-5">
+    <h1 class="text-center">Welcome to ATG Healthcare, {{user}}</h1>
+    {% if request.user.status == 'Doctor' %}    
+    <!-- Modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#blogPostModalLabel">
+      Create Blog Post
+    </button>
+    <div class="modal fade" id="blogPostModalLabel" tabindex="-1" aria-labelledby="blogPostModalLabel" aria-hidden="true">
+      <form id="blogPostForm" class="needs-validation" method="post" enctype="multipart/form-data" novalidate>
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="Title">Add a new Blog</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% csrf_token %}
+            <div class="row g-3">
+                <input type="hidden" value="{{request.user.id}}" id="user" name="user">                
+                <div class="col-12">
+                    <label for="id_title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="id_title" name="title" placeholder="Enter The title of Blog" required>
+                    <div class="invalid-feedback">
+                    Title is required.
+                    </div>
+                </div>
+                <div class="col-12">
+                  <label for="id_image" class="form-label">Image</label>
+                  <input type="file" class="form-control" id="id_image" name="image" placeholder="Upload an Image" required>
+                  <div class="invalid-feedback">
+                    upload an image file
+                  </div>  
+                </div>        
+                <div class="col-12">
+                  <label for="category" class="form-label">Category</label>
+                  {{ form.category }}
+                  <div class="invalid-feedback">
+                  Select a Category.
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label for="id_summary" class="form-label">Summary</label>
+                  <textarea class="form-control" name="summary" id="id_summary" rows="3" placeholder="Enter the Summary" required></textarea>
+                  <div class="invalid-feedback">
+                  Summary is required.
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label for="status" class="form-label">Status</label>
+                    {{ form.status }}
+                </div>
+                <div class="col-12">
+                  <label for="id_content" class="form-label">Content</label>
+                  <textarea class="form-control" name="content" id="id_content" rows="3" placeholder="Enter the Content" required></textarea>
+                  <div class="invalid-feedback">
+                    Content is required.
+                  </div>
+                </div>
+            </div>
+            <!-- Alert placeholder -->
+            <div id="alertPlaceholder"></div>
+            
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" id="FormSubmit" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+      </form>           
+    </div>
+    <h5 class="pt-3">My Posts</h5>
+    <div class="container border pb-3">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Category</th>
+            <th scope="col">Status</th>            
+            <th scope="col">Summary</th>
+            <th scope="col">Link</th>          
+          </tr>
+          </thead>
+          <tbody>
+            {% for row in blog %}
+            {% if row.user == request.user %}        
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td><a href="">{{row.title}}</a></td>
+              <td>{{row.category}}</td>
+              <td>{{row.status}}</td>              
+              <td>{{row.summary}}</td>
+              <td><a href="">view</a></td>
+            </tr>
+            {% endif %}
+            {% endfor %}            
+          </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if request.user.status == 'Patient' %}
+    <div class="container my-3">
+      <h3 class="text-center">Blog Posts</h3>
+      {% regroup posts by category as category_list %}
+      {% for category in category_list %}
+      <div class="mb-4">
+          <h5>Category: <span class="text-success">{{ category.grouper }}</span></h5>
+          <div class="row">
+            {% for post in category.list %}
+            <div class="col-12 mb-4">
+              <div class="card mb-3">
+                <div class="row g-0">
+                  <div class="col-md-5">
+                    <img src="{{ post.profile_picture.url }}"  class="card-img-top" width="100%" height="250" alt="{{ post.title }}">
+                  </div>
+                  <div class="col-md-7">
+                    <div class="card-body">                  
+                      <h5 class="card-title">{{ post.title }}</h5>
+                      <p class="card-text">
+                          {{ post.summary|truncatewords:15 }}...
+                      </p>
+                      <p class="text-muted">by: <span class="text-primary">Dr. {{post.user}}</span></p>                      
+                      <p class="text-muted">{{post.created}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+      </div>
+      {% endfor %}
+      {% endif %}      
+    </div>
+  </div>
 
 {% include 'footer.html' %}    
-<script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('blogPostForm');
+    form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            form.classList.add('was-validated');
+        }
+        if (form.checkValidity()) {
+          event.preventDefault();
+          var formData = new FormData(this);
+          $.ajax({
+              type: 'POST',
+              url: '{% url "add_blog" %}',
+              data: formData,
+              contentType: false,
+              processData: false,
+              success: function(response) {
+                  if (response.success) {
+                      $('#alertPlaceholder').html('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                          response.message +
+                          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                          '</div>');
+                      // $('#blogPostModal').modal('hide');
+                      $('#blogPostForm')[0].reset();
+                      $('#FormSubmit').prop('disabled', true);;
+                  } else {
+                      $('#alertPlaceholder').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                          'Failed to create blog post.' +
+                          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                          '</div>');
+                      // Display validation errors
+                      var errors = JSON.parse(response.errors);
+                      $.each(errors, function(key, value) {
+                          var field = $('#id_' + key);
+                          field.addClass('is-invalid');
+                          field.after('<div class="invalid-feedback">' + value[0].message + '</div>');
+                      });
+                  }
+              },
+              error: function(response) {
+                  $('#alertPlaceholder').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                      'Error submitting form.' +
+                      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                      '</div>');
+              }
+          });
+        }
+    });
+  });
+</script>
 <!-- <script type="text/javascript" src="{% static 'assets/js/program_reg_script.js' %}"></script> -->
 
 </body>

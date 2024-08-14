@@ -79,8 +79,16 @@ WSGI_APPLICATION = 'Banao_Task.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'atg_task',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': 'ameer8889',
+        'OPTION': {
+            'init_command': "SET sql_mode='STRICT_ALL_TABLES'"
+        },
     }
 }
 
@@ -104,14 +112,17 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+STATIC_ROOT = BASE_DIR / "static-files"
+
 STATIC_URL = 'static/'
 
-MEDIA_URL = '/media/'
-
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+        BASE_DIR / "static"
 ]
 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
